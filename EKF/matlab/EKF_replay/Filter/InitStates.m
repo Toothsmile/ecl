@@ -9,19 +9,27 @@ quat = [1;0;0;0];
 
 if (param.control.waitForGps == 1)
     % find IMU start index that coresponds to first valid GPS data
+    %如果需要等待gps，先判断下是否有GPS数据
+    %imu_data.time_us > gps_data.time_us(gps_data.start_index) 
+    %find(arry,1,'first') 找出arry首次出现1个不为0的数
+    %找出gps数据出现时候的imu的time_us
     imu_start_index = (find(imu_data.time_us > gps_data.time_us(gps_data.start_index), 1, 'first' ) - 50);
+    %如果gps数据一致没有出现，就将imu赋值
     imu_start_index = max(imu_start_index,1);
 else
     imu_start_index = 1;
 end
 
 % average first 100 accel readings to reduce effect of vibration
+%del_vel：变化的速度值 
+%accel_dt:只有1维，我猜他是加速度的总值，这里拿x,y,z三个方向的加速度分量与总的相/，有点归一化的感觉
 initAccel(1) = mean(imu_data.del_vel(imu_start_index:imu_start_index+99,1))./mean(imu_data.accel_dt(imu_start_index:imu_start_index+99,1));
 initAccel(2) = mean(imu_data.del_vel(imu_start_index:imu_start_index+99,2))./mean(imu_data.accel_dt(imu_start_index:imu_start_index+99,1));
 initAccel(3) = mean(imu_data.del_vel(imu_start_index:imu_start_index+99,3))./mean(imu_data.accel_dt(imu_start_index:imu_start_index+99,1));
 
 % align tilt using gravity vector (If the velocity is changing this will
 % induce errors)
+%利用重力向量改正倾斜（如果速度改变将会导致误差）？？？？？？
 quat = AlignTilt(quat,initAccel);
 states(1:4) = quat;
 
