@@ -8,12 +8,12 @@ lengthAccel = sqrt(dot([initAccel(1);initAccel(2);initAccel(3)],[initAccel(1);in
 %如果加速度在这个范围内，采用重力改正倾斜
 if (lengthAccel > 5 && lengthAccel < 14)
     % calculate length of the tilt vector
-    %tiltMagnitude 切斜幅度
+    %tiltMagnitude 倾斜幅度由加速度三个分量计算
     %atan2(y,x)  means atan(y/x)，but atan2 scop is -pi ~pi
     tiltMagnitude = atan2(sqrt(dot([initAccel(1);initAccel(2)],[initAccel(1);initAccel(2)])),-initAccel(3));
     % take the unit cross product of the accel vector and the -Z vector to
     % give the tilt unit vector
-    if (tiltMagnitude > 1e-3)
+    if (tiltMagnitude > 1e-3)%（没看懂啊）
         tiltUnitVec = cross([initAccel(1);initAccel(2);initAccel(3)],[0;0;-1]);
         tiltUnitVec = tiltUnitVec/sqrt(dot(tiltUnitVec,tiltUnitVec));
         tiltVec = tiltMagnitude*tiltUnitVec;

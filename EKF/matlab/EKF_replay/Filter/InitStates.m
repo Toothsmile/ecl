@@ -30,10 +30,10 @@ initAccel(3) = mean(imu_data.del_vel(imu_start_index:imu_start_index+99,3))./mea
 % align tilt using gravity vector (If the velocity is changing this will
 % induce errors)
 %利用重力向量改正倾斜（如果速度改变将会导致误差）？？？？？？
-quat = AlignTilt(quat,initAccel);
+quat = AlignTilt(quat,initAccel);%给四元数赋初值
 states(1:4) = quat;
 
-% add a roll, pitch, yaw mislignment
+% add a roll, pitch, yaw mislignment 增加
 quat_align_err = EulToQuat([param.control.rollAlignErr,param.control.pitchAlignErr,param.control.yawAlignErr]);
 quat = QuatMult(quat,quat_align_err);
 
@@ -47,7 +47,7 @@ magBody(2,1) = mean(mag_data.field_ga(mag_start_index:mag_start_index+9,2));
 magBody(3,1) = mean(mag_data.field_ga(mag_start_index:mag_start_index+9,3));
 
 % align heading and initialise the NED magnetic field states
-quat = AlignHeading(quat,magBody,param.fusion.magDeclDeg*deg2rad);
+quat = AlignHeading(quat,magBody,param.fusion.magDeclDeg*deg2rad);%通过磁场与重力加速度初始化了quat
 states(1:4) = quat;
 
 % initialise the NED magnetic field states
@@ -57,7 +57,7 @@ states(17:19) = Tbn*magBody;
 if (param.control.waitForGps == 1)
     % initialise velocity and position using gps
     states(5:7) = gps_data.vel_ned(gps_data.start_index,:);
-    states(8:9) = gps_data.pos_ned(gps_data.start_index,1:2);
+    states(8:9) = gps_data.pos_ned(gps_data.start_index,1:2);%GPS的高层并没有使用，使用的是气压计的高度观测值
 else
     % initialise to be stationary at the origin
     states(5:7) = zeros(1,3);

@@ -45,7 +45,7 @@ gravity = 9.80665; % initial value of gravity - will be updated when WGS-84 posi
 
 % initialise the state vector
 [states, imu_start_index] = InitStates(param,imu_data,gps_data,mag_data,baro_data);
-
+%这个dt_imu_avg z这个dt是imu的测量累积时间 这个来限制偏差？？？
 dt_imu_avg = 0.5 * (median(imu_data.gyro_dt) + median(imu_data.accel_dt));
 indexStop = length(imu_data.time_us) - imu_start_index;
 indexStart = 1;
@@ -90,17 +90,17 @@ last_viso_index = 0;
 viso_fuse_index = 0;
 last_range_index = 0;
 
-% covariance prediction variables
-delAngCov = [0;0;0]; % delta angle vector used by the covariance prediction (rad)
+% covariance prediction variables %Q阵好少  角度 速度 dt？？%
+delAngCov = [0;0;0]; % delta angle vector used by the covariance prediction (rad) 通过协方差预测之后的角度变化向量
 delVelCov = [0;0;0]; % delta velocity vector used by the covariance prediction (m/sec)
-dtCov = 0; % time step used by the covariance prediction (sec)
-dtCovInt = 0; % accumulated time step of covariance predictions (sec)
+dtCov = 0; % time step used by the covariance prediction (sec) 协方差预测的时间步长
+dtCovInt = 0; % accumulated time step of covariance predictions (sec) 协方差预测中累积的时间步长统计
 covIndex = 0; % covariance prediction frame counter
 
 output.magFuseMethod = param.fusion.magFuseMethod;
 range = 0.1;
 
-% variables used to control dead-reckoning timeout
+% variables used to control dead-reckoning timeout 航位推算的时间限制
 last_drift_constrain_time = - param.control.velDriftTimeLim;
 last_synthetic_velocity_fusion_time = 0;
 last_valid_range_time = - param.fusion.rngTimeout;
@@ -111,19 +111,19 @@ for index = indexStart:indexStop
     local_time=imu_data.time_us(imuIndex)*1e-6;
     delta_angle(:,1) = imu_data.del_ang(imuIndex,:);
     delta_velocity(:,1) = imu_data.del_vel(imuIndex,:);
-    dt_imu = 0.5 * (imu_data.accel_dt(imuIndex) + imu_data.gyro_dt(imuIndex));
+    dt_imu = 0.5 * (imu_data.accel_dt(imuIndex) + imu_data.gyro_dt(imuIndex));%这个是什么意思 是采样的间隔嘛
     imuIndex = imuIndex+1;
     
     % predict states
     [states, delAngCorrected, delVelCorrected]  = PredictStates(states,delta_angle,delta_velocity,imu_data.accel_dt(imuIndex),gravity,gps_data.refLLH(1,1)*deg2rad);
     
-    % constrain states
+    % constrain states 限制陀螺仪与加速度偏差限制（）不是能看懂
     [states]  = ConstrainStates(states,dt_imu_avg);
     
-    dtCov = dtCov + dt_imu;
-    delAngCov = delAngCov + delAngCorrected;
+    dtCov = dtCov + dt_imu;%
+    delAngCov = delAngCov + delAngCorrected;%
     delVelCov = delVelCov + delVelCorrected;
-    if (dtCov > 0.01)
+    if (dtCov > 0.01)%为什么设置了一个0.01的阈值，0.01难道是GPS的采样评率，为啥0.01才可以进行方差估计呢
         % predict covariance
         covariance  = PredictCovariance(delAngCov,delVelCov,states,covariance,dtCov,param);
         delAngCov = [0;0;0];
