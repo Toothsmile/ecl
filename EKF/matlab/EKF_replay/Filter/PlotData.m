@@ -1,4 +1,4 @@
-function PlotData(output,folder,runIdentifier)
+function PlotData(output,folder,runIdentifier)%后面两个都是字符串
 rad2deg = 180/pi;
 if ~exist(folder,'dir')
     mkdir(folder);
@@ -15,6 +15,7 @@ set(h,'PaperPosition', [0 0 1 1]);
 margin = 5;
 
 subplot(3,1,1);
+%其中-2背中误差即是95的置信区间
 plot(output.time_lapsed,[output.euler_angles(:,1)*rad2deg,output.euler_angles(:,1)*rad2deg-2*sqrt(output.euler_variances(:,1)*rad2deg),output.euler_angles(:,1)*rad2deg+2*sqrt(output.euler_variances(:,1)*rad2deg)]);
 minVal = rad2deg*min(output.euler_angles(:,1))-margin;
 maxVal = rad2deg*max(output.euler_angles(:,1))+margin;

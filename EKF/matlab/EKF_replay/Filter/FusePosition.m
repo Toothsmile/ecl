@@ -9,7 +9,7 @@ function [...
     measPos, ... % NE position measurements (m)
     gateSize, ... % Size of the innovation consistency check gate (std-dev)
     R_OBS) % position observation variance (m)^2
-
+%fuse position只估计了
 innovation = zeros(1,2);
 varInnov = zeros(1,2);
 H = zeros(2,24);
@@ -20,16 +20,17 @@ for obsIndex = 1:2
     stateIndex = 7 + obsIndex;
 
     % Calculate the velocity measurement innovation
-    innovation(obsIndex) = states(stateIndex) - measPos(obsIndex);
+    innovation(obsIndex) = states(stateIndex) - measPos(obsIndex);%新息
     
     % Calculate the observation Jacobian
     H(obsIndex,stateIndex) = 1;
-    
-    varInnov(obsIndex) = (H(obsIndex,:)*P*transpose(H(obsIndex,:)) + R_OBS);
+ 
+    varInnov(obsIndex) = (H(obsIndex,:)*P*transpose(H(obsIndex,:)) + R_OBS);%计算位置协方差
     
 end
 
-% Apply an innovation consistency check
+% Apply an innovation consistency check 更新的一致性检查？？？
+% 这个应该就是预测残差如果大于预测协方差的y则为滤波发散
 for obsIndex = 1:2
     
     if (innovation(obsIndex)^2 / (gateSize^2 * varInnov(obsIndex))) > 1.0
@@ -41,7 +42,7 @@ end
 % Calculate Kalman gains and update states and covariances
 for obsIndex = 1:2
     
-    % Calculate the Kalman gains
+    % Calculate the Kalman gains 
     K = (P*transpose(H(obsIndex,:)))/varInnov(obsIndex);
     
     % Calculate state corrections
@@ -54,6 +55,7 @@ for obsIndex = 1:2
     P = P - K*H(obsIndex,:)*P;
     
     % Force symmetry on the covariance matrix to prevent ill-conditioning
+    % 还是使协方差矩阵强制对齐
     P = 0.5*(P + transpose(P));
     
     % ensure diagonals are positive
