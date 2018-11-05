@@ -48,15 +48,16 @@ Q = calcQ24(daxVar,dayVar,dazVar,dvxVar,dvyVar,dvzVar,q0,q1,q2,q3);
 P = F*P*transpose(F) + Q;
 
 % Add the general process noise variance
-for i = 1:24
+for i = 1:24 %为加速度计陀螺仪的预测残差
     P(i,i) = P(i,i) + processNoiseVariance(i);
 end
 
 % Force symmetry on the covariance matrix to prevent ill-conditioning
 % of the matrix which would cause the filter to blow-up
+%强制协方差矩阵对称，防止矩阵的错误配置导致滤波爆炸
 P = 0.5*(P + transpose(P));
 
-% ensure diagonals are positive
+% ensure diagonals are positive确保diag都大于0
 for i=1:24
     if P(i,i) < 0
         P(i,i) = 0;
