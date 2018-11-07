@@ -5,10 +5,10 @@ close all;
 addpath('../Common');
 
 % load test data
-load '../TestData/PX4/baro_data.mat';
-load '../TestData/PX4/gps_data.mat';
-load '../TestData/PX4/imu_data.mat';
-load '../TestData/PX4/mag_data.mat';
+load '../TestData/csv_data/11-7官方固件测试数据/baro_data.mat';
+load '../TestData/csv_data/11-7官方固件测试数据/gps_data.mat';
+load '../TestData/csv_data/11-7官方固件测试数据/imu_data.mat';
+load '../TestData/csv_data/11-7官方固件测试数据/mag_data.mat';
 
 % set parameters to default values
 run('SetParameters.m');
