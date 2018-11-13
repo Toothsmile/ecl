@@ -1,6 +1,6 @@
 
 file_tmp='./11-7 test mag_data/02_02_48';
-% %% convert baro data
+%% convert baro data
 clear baro_data;
 baro=csvread([file_tmp '_vehicle_air_data_0.csv'],1,0);
 %¸³Öµ
@@ -45,7 +45,7 @@ imu_data.del_ang = [gyro_rad0.*imu_data.gyro_dt, gyro_rad1.*imu_data.gyro_dt, gy
 imu_data.accel_dt = accelerometer_integral_dt ./ 1e6;
 imu_data.del_vel = [accelerometer_m_s20.*imu_data.accel_dt, accelerometer_m_s21.*imu_data.accel_dt, accelerometer_m_s22.*imu_data.accel_dt];
 
-% %% convert magnetomer data
+%% convert magnetomer data
 clear mag_data;
 mag=csvread([file_tmp '_vehicle_magnetometer_0.csv'],1,0);
 %¸³Öµ 
@@ -68,7 +68,7 @@ end
 save baro_data.mat baro_data;
 save imu_data.mat imu_data;
 save mag_data.mat mag_data;
-%convert GPS csv
+%% convert GPS csv
 
 clear gps_data;
 gps=csvread([file_tmp '_vehicle_gps_position_0.csv'],1,0);
