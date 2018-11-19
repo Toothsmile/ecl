@@ -9,32 +9,32 @@ quat = [1;0;0;0];
 
 if (param.control.waitForGps == 1)
     % find IMU start index that coresponds to first valid GPS data
-    %Èç¹ûĞèÒªµÈ´ıgps£¬ÏÈÅĞ¶ÏÏÂÊÇ·ñÓĞGPSÊı¾İ
+    %å¦‚æœéœ€è¦ç­‰å¾…gpsï¼Œå…ˆåˆ¤æ–­ä¸‹æ˜¯å¦æœ‰GPSæ•°æ®
     %imu_data.time_us > gps_data.time_us(gps_data.start_index) 
-    %find(arry,1,'first') ÕÒ³öarryÊ×´Î³öÏÖ1¸ö²»Îª0µÄÊı
-    %ÕÒ³ögpsÊı¾İ³öÏÖÊ±ºòµÄimuµÄtime_us
+    %find(arry,1,'first') æ‰¾å‡ºarryé¦–æ¬¡å‡ºç°1ä¸ªä¸ä¸º0çš„æ•°
+    %æ‰¾å‡ºgpsæ•°æ®å‡ºç°æ—¶å€™çš„imuçš„time_us
     imu_start_index = (find(imu_data.time_us > gps_data.time_us(gps_data.start_index), 1, 'first' ) - 50);
-    %Èç¹ûgpsÊı¾İÒ»ÖÂÃ»ÓĞ³öÏÖ£¬¾Í½«imu¸³Öµ
+    %å¦‚æœgpsæ•°æ®ä¸€è‡´æ²¡æœ‰å‡ºç°ï¼Œå°±å°†imuèµ‹å€¼
     imu_start_index = max(imu_start_index,1);
 else
     imu_start_index = 1;
 end
 
 % average first 100 accel readings to reduce effect of vibration
-%del_vel£º±ä»¯µÄËÙ¶ÈÖµ 
-%accel_dt:Ö»ÓĞ1Î¬£¬ÎÒ²ÂËûÊÇ¼ÓËÙ¶ÈµÄ×ÜÖµ£¬ÕâÀïÄÃx,y,zÈı¸ö·½ÏòµÄ¼ÓËÙ¶È·ÖÁ¿Óë×ÜµÄÏà/£¬ÓĞµã¹éÒ»»¯µÄ¸Ğ¾õ
+%del_velï¼šå˜åŒ–çš„é€Ÿåº¦å€¼ 
+%accel_dt:åªæœ‰1ç»´ï¼Œæˆ‘çŒœä»–æ˜¯åŠ é€Ÿåº¦çš„æ€»å€¼ï¼Œè¿™é‡Œæ‹¿x,y,zä¸‰ä¸ªæ–¹å‘çš„åŠ é€Ÿåº¦åˆ†é‡ä¸æ€»çš„ç›¸/ï¼Œæœ‰ç‚¹å½’ä¸€åŒ–çš„æ„Ÿè§‰
 initAccel(1) = mean(imu_data.del_vel(imu_start_index:imu_start_index+99,1))./mean(imu_data.accel_dt(imu_start_index:imu_start_index+99,1));
 initAccel(2) = mean(imu_data.del_vel(imu_start_index:imu_start_index+99,2))./mean(imu_data.accel_dt(imu_start_index:imu_start_index+99,1));
 initAccel(3) = mean(imu_data.del_vel(imu_start_index:imu_start_index+99,3))./mean(imu_data.accel_dt(imu_start_index:imu_start_index+99,1));
 
 % align tilt using gravity vector (If the velocity is changing this will
 % induce errors)
-%ÀûÓÃÖØÁ¦ÏòÁ¿¸ÄÕıÇãĞ±£¨Èç¹ûËÙ¶È¸Ä±ä½«»áµ¼ÖÂÎó²î£©£¿£¿£¿£¿£¿£¿
-quat = AlignTilt(quat,initAccel);%¸øËÄÔªÊı¸³³õÖµ
+%åˆ©ç”¨é‡åŠ›å‘é‡å¯¹é½å€¾æ–œï¼ˆå¦‚æœé€Ÿåº¦æ”¹å˜å°†ä¼šå¯¼è‡´è¯¯å·®ï¼‰
+quat = AlignTilt(quat,initAccel);%ç»™å››å…ƒæ•°èµ‹åˆå€¼
 states(1:4) = quat;
 
-% add a roll, pitch, yaw mislignment Ôö¼Ó
-quat_align_err = EulToQuat([param.control.rollAlignErr,param.control.pitchAlignErr,param.control.yawAlignErr]);
+% add a roll, pitch, yaw mislignment å¢åŠ ä¸€ä¸ªrpyçš„åˆå§‹å·®å€¼
+quat_align_err = EulToQuat([param.control.rollAlignErr,param.control.pitchAlignErr,param.control.yawAlignErr]);%å°†æ¬§æ‹‰è§’è®¾ç½®çš„é”™ä½è¯¯å·®è½¬æ¢ä¸ºå››å…ƒæ•°çš„é”™ä½è¯¯å·®
 quat = QuatMult(quat,quat_align_err);
 
 % find magnetometer start index
@@ -47,7 +47,7 @@ magBody(2,1) = mean(mag_data.field_ga(mag_start_index:mag_start_index+9,2));
 magBody(3,1) = mean(mag_data.field_ga(mag_start_index:mag_start_index+9,3));
 
 % align heading and initialise the NED magnetic field states
-quat = AlignHeading(quat,magBody,param.fusion.magDeclDeg*deg2rad);%Í¨¹ı´Å³¡ÓëÖØÁ¦¼ÓËÙ¶È³õÊ¼»¯ÁËquat
+quat = AlignHeading(quat,magBody,param.fusion.magDeclDeg*deg2rad);%é€šè¿‡ç£åœºä¸é‡åŠ›åŠ é€Ÿåº¦åˆå§‹åŒ–äº†quat
 states(1:4) = quat;
 
 % initialise the NED magnetic field states
@@ -57,7 +57,7 @@ states(17:19) = Tbn*magBody;
 if (param.control.waitForGps == 1)
     % initialise velocity and position using gps
     states(5:7) = gps_data.vel_ned(gps_data.start_index,:);
-    states(8:9) = gps_data.pos_ned(gps_data.start_index,1:2);%GPSµÄ¸ß²ã²¢Ã»ÓĞÊ¹ÓÃ£¬Ê¹ÓÃµÄÊÇÆøÑ¹¼ÆµÄ¸ß¶È¹Û²âÖµ
+    states(8:9) = gps_data.pos_ned(gps_data.start_index,1:2);%GPSçš„é«˜ç¨‹å¹¶æ²¡æœ‰ä½¿ç”¨ï¼Œä½¿ç”¨çš„æ˜¯æ°”å‹è®¡çš„é«˜åº¦è§‚æµ‹å€¼
 else
     % initialise to be stationary at the origin
     states(5:7) = zeros(1,3);

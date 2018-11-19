@@ -1,4 +1,4 @@
-function PlotData(output,folder,runIdentifier)%ºóÃæÁ½¸ö¶¼ÊÇ×Ö·û´®
+function PlotData(output,folder,runIdentifier)%åé¢ä¸¤ä¸ªéƒ½æ˜¯å­—ç¬¦ä¸²
 rad2deg = 180/pi;
 if ~exist(folder,'dir')
     mkdir(folder);
@@ -15,7 +15,7 @@ set(h,'PaperPosition', [0 0 1 1]);
 margin = 5;
 
 subplot(3,1,1);
-%ÆäÖĞ-2±³ÖĞÎó²î¼´ÊÇ95µÄÖÃĞÅÇø¼ä
+%å…¶ä¸­-2èƒŒä¸­è¯¯å·®å³æ˜¯95çš„ç½®ä¿¡åŒºé—´
 plot(output.time_lapsed,[output.euler_angles(:,1)*rad2deg,output.euler_angles(:,1)*rad2deg-2*sqrt(output.euler_variances(:,1)*rad2deg),output.euler_angles(:,1)*rad2deg+2*sqrt(output.euler_variances(:,1)*rad2deg)]);
 minVal = rad2deg*min(output.euler_angles(:,1))-margin;
 maxVal = rad2deg*max(output.euler_angles(:,1))+margin;

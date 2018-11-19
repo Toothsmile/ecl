@@ -1,14 +1,14 @@
 function [states, correctedDelAng, correctedDelVel]  = PredictStates( ...
     states, ... % previous state vector (4x1 quaternion, 3x1 velocity, 3x1 position, 3x1 delAng bias, 3x1 delVel bias)
-    delAng, ... % IMU delta angle measurements, 3x1 (rad) ±ä»¯µÄ½Ç¶È¹Û²âÖµÊÇÓÃÀ´¼ÆËãËÄÔªÊıµÄÖĞ¼äÖµ
-    delVel, ... % IMU delta velocity measurements 3x1 (m/s) ±ä»¯µÄËÙ¶ÈÖµÊÇÓÃÀ´¼ÆËãËÙ¶ÈÓëÎ»ÖÃµÄÖĞ¼äÖµ
-    dt, ... % accumulation time of the IMU measurement (sec) IMU²âÁ¿µÄÀÛ»ıÊ±¼ä
+    delAng, ... % IMU delta angle measurements, 3x1 (rad) å˜åŒ–çš„è§’åº¦è§‚æµ‹å€¼æ˜¯ç”¨æ¥è®¡ç®—å››å…ƒæ•°çš„ä¸­é—´å€¼
+    delVel, ... % IMU delta velocity measurements 3x1 (m/s) å˜åŒ–çš„é€Ÿåº¦å€¼æ˜¯ç”¨æ¥è®¡ç®—é€Ÿåº¦ä¸ä½ç½®çš„ä¸­é—´å€¼
+    dt, ... % accumulation time of the IMU measurement (sec) IMUæµ‹é‡çš„ç´¯ç§¯æ—¶é—´
     gravity, ... % acceleration due to gravity (m/s/s)
     latitude) % WGS-84 latitude (rad)
 
 % define persistent variables for previous delta angle and velocity which
 % are required for sculling and coning error corrections
-persistent prevDelAng;%persistent ±äÁ¿½«ÃüÃûµÄ±äÁ¿Ò»Ö±±£´æÔÚÄÚ´æÖĞ
+persistent prevDelAng;%persistent å˜é‡å°†å‘½åçš„å˜é‡ä¸€ç›´ä¿å­˜åœ¨å†…å­˜ä¸­
 if isempty(prevDelAng)
     prevDelAng = delAng;
 end
@@ -35,9 +35,9 @@ delVel = delVel - states(14:16);
 % 2015, WBN-14010
 % correctedDelVel= delVel + ...
 %     0.5*cross(prevDelAng + delAng , prevDelVel + delVel) + 1/6*cross(prevDelAng + delAng , cross(prevDelAng + delAng , prevDelVel + delVel)) +  1/12*(cross(prevDelAng , delVel) + cross(prevDelVel , delAng));
-correctedDelVel= delVel;%ÎªÊ²Ã´½²ÁË¹«Ê½Ã»ÓĞÓÃÉÏÄØ
+correctedDelVel= delVel;%ä¸ºä»€ä¹ˆè®²äº†å…¬å¼æ²¡æœ‰ç”¨ä¸Šå‘¢
 
-% Calculate earth delta angle spin vector ¼ÆËãµØÇòµÄ½Ç¶È×ÔĞıÊ¸Á¿
+% Calculate earth delta angle spin vector è®¡ç®—åœ°çƒçš„è§’åº¦è‡ªæ—‹çŸ¢é‡
 delAngEarth_NED(1,1) = 0.000072921 * cos(latitude) * dt;
 delAngEarth_NED(2,1) = 0.0;
 delAngEarth_NED(3,1) = -0.000072921 * sin(latitude) * dt;
@@ -56,21 +56,21 @@ prevDelAng = delAng;
 prevDelVel = delVel;
 
 % Convert the rotation vector to its equivalent quaternion
-% ´¦ÀíÓë¹Û²âÄ£ĞÍµÄpdfÖĞÓĞ½²Õâ¸ö£¬µ«ÊÇÓëÆä²»Í¬ RotToQuat
+% å¤„ç†ä¸è§‚æµ‹æ¨¡å‹çš„pdfä¸­æœ‰è®²è¿™ä¸ªï¼Œä½†æ˜¯ä¸å…¶ä¸åŒ RotToQuat
 deltaQuat = RotToQuat(correctedDelAng);
 
 % Update the quaternions by rotating from the previous attitude through
-% the delta angle rotation quaternion ¸ÃÊÔ×ÓÓëpdfÍ¬
+% the delta angle rotation quaternion è¯¥è¯•å­ä¸pdfåŒ
 states(1:4) = QuatMult(states(1:4),deltaQuat);
 
-% Normalise the quaternions ¹éÒ»»¯ËÄÔªÊı
+% Normalise the quaternions å½’ä¸€åŒ–å››å…ƒæ•°
 states(1:4) = NormQuat(states(1:4));
 
-% Calculate the body to nav cosine matrix ÔÙÓÃĞÂµÄ¹À¼Æ³öµÄËÄÔªËØ¼ÆËã¼ÆËã³ö×ª»»¾ØÕó£¬ÎªÊ²Ã´²»ÓÃÆ½»¬ºóµÄÖµÄØ?
+% Calculate the body to nav cosine matrix å†ç”¨æ–°çš„ä¼°è®¡å‡ºçš„å››å…ƒç´ è®¡ç®—è®¡ç®—å‡ºè½¬æ¢çŸ©é˜µï¼Œä¸ºä»€ä¹ˆä¸ç”¨å¹³æ»‘åçš„å€¼å‘¢?
 Tbn = Quat2Tbn(states(1:4));
 Tbn_prev = Tbn;
 
-% transform body delta velocities to delta velocities in the nav frame Í¬pdf
+% transform body delta velocities to delta velocities in the nav frame åŒpdf
 delVelNav = Tbn * correctedDelVel + [0;0;gravity]*dt;
 
 % take a copy of the previous velocity

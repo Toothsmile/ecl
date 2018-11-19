@@ -3,7 +3,7 @@ file_tmp='./11-7 test mag_data/02_02_48';
 %% convert baro data
 clear baro_data;
 baro=csvread([file_tmp '_vehicle_air_data_0.csv'],1,0);
-%¸³Öµ
+%èµ‹å€¼
 timestamp=baro(:,1);
 baro_alt_meter=baro(:,2);
 last_time = 0;
@@ -13,7 +13,7 @@ for source_index = 1:length(timestamp)
      baro_timestamp = timestamp(source_index);
     if (baro_timestamp ~= last_time)
         baro_data.time_us(output_index,1) = baro_timestamp;
-        baro_data.height(output_index) = baro_alt_meter(source_index);%height data ÔõÃ´ÊÇºáµÄÊı¾İ
+        baro_data.height(output_index) = baro_alt_meter(source_index);%height data æ€ä¹ˆæ˜¯æ¨ªçš„æ•°æ®
         last_time = baro_timestamp;
         output_index = output_index + 1;
     end
@@ -24,7 +24,7 @@ end
 % the integral_dt values in the PX4 sensor module so we only need to
 % multiply by integral_dt to convert back
 clear imu_data;
-%¸³Öµ
+%èµ‹å€¼
 imu=csvread([file_tmp '_sensor_combined_0.csv'],1,0);
 timestamp=imu(:,1);
 accelerometer_timestamp_relative=imu(:,6);
@@ -36,7 +36,7 @@ accelerometer_integral_dt=imu(:,10);
 accelerometer_m_s20=imu(:,7);
 accelerometer_m_s21=imu(:,8);
 accelerometer_m_s22=imu(:,9);
-%×ª»»
+%è½¬æ¢
 n_samples = length(timestamp);
 imu_data.time_us = timestamp + accelerometer_timestamp_relative;
 imu_data.gyro_dt = gyro_integral_dt ./ 1e6;
@@ -48,7 +48,7 @@ imu_data.del_vel = [accelerometer_m_s20.*imu_data.accel_dt, accelerometer_m_s21.
 %% convert magnetomer data
 clear mag_data;
 mag=csvread([file_tmp '_vehicle_magnetometer_0.csv'],1,0);
-%¸³Öµ 
+%èµ‹å€¼ 
 timestamp=mag(:,1);
 magnetometer_ga0=mag(:,2);
 magnetometer_ga1=mag(:,3);
@@ -72,7 +72,7 @@ save mag_data.mat mag_data;
 
 clear gps_data;
 gps=csvread([file_tmp '_vehicle_gps_position_0.csv'],1,0);
-%¸³Öµ
+%èµ‹å€¼
 timestamp=gps(:,1);
 timestamp_time_relative=gps(:,20);
 eph=gps(:,9);

@@ -9,7 +9,7 @@ function [...
     measPos, ... % NE position measurements (m)
     gateSize, ... % Size of the innovation consistency check gate (std-dev)
     R_OBS) % position observation variance (m)^2
-%fuse positionÖ»¹À¼ÆÁË
+%fuse positionåªä¼°è®¡äº†
 innovation = zeros(1,2);
 varInnov = zeros(1,2);
 H = zeros(2,24);
@@ -20,17 +20,17 @@ for obsIndex = 1:2
     stateIndex = 7 + obsIndex;
 
     % Calculate the velocity measurement innovation
-    innovation(obsIndex) = states(stateIndex) - measPos(obsIndex);%ĞÂÏ¢
+    innovation(obsIndex) = states(stateIndex) - measPos(obsIndex);%æ–°æ¯
     
     % Calculate the observation Jacobian
     H(obsIndex,stateIndex) = 1;
  
-    varInnov(obsIndex) = (H(obsIndex,:)*P*transpose(H(obsIndex,:)) + R_OBS);%¼ÆËãÎ»ÖÃĞ­·½²î
+    varInnov(obsIndex) = (H(obsIndex,:)*P*transpose(H(obsIndex,:)) + R_OBS);%è®¡ç®—ä½ç½®åæ–¹å·®
     
 end
 
-% Apply an innovation consistency check ¸üĞÂµÄÒ»ÖÂĞÔ¼ì²é£¿£¿£¿
-% Õâ¸öÓ¦¸Ã¾ÍÊÇÔ¤²â²Ğ²îÈç¹û´óÓÚÔ¤²âĞ­·½²îµÄyÔòÎªÂË²¨·¢É¢
+% Apply an innovation consistency check æ›´æ–°çš„ä¸€è‡´æ€§æ£€æŸ¥ï¼Ÿï¼Ÿï¼Ÿ
+% è¿™ä¸ªåº”è¯¥å°±æ˜¯é¢„æµ‹æ®‹å·®å¦‚æœå¤§äºé¢„æµ‹åæ–¹å·®çš„yåˆ™ä¸ºæ»¤æ³¢å‘æ•£
 for obsIndex = 1:2
     
     if (innovation(obsIndex)^2 / (gateSize^2 * varInnov(obsIndex))) > 1.0
@@ -55,7 +55,7 @@ for obsIndex = 1:2
     P = P - K*H(obsIndex,:)*P;
     
     % Force symmetry on the covariance matrix to prevent ill-conditioning
-    % »¹ÊÇÊ¹Ğ­·½²î¾ØÕóÇ¿ÖÆ¶ÔÆë
+    % è¿˜æ˜¯ä½¿åæ–¹å·®çŸ©é˜µå¼ºåˆ¶å¯¹é½
     P = 0.5*(P + transpose(P));
     
     % ensure diagonals are positive

@@ -3,7 +3,7 @@ function covariance = InitCovariance(param,dt,gps_alignment,gps_data)
 % Define quaternion state errors
 Sigma_quat = param.alignment.quatErr * [1;1;1;1];
 
-% Define velocity state errorsÈç¹ûGPS¿ªÊ¼µÄ»°¾ÍÓÃGPSµÄËÙ¶ÈÎó²î£¬Èç¹ûÃ»ÓĞµÄ»°¾ÍÓÃ²ÎÊıËùÉèÖÃµÄ¶Ô×¼Îó²î
+% Define velocity state errorså¦‚æœGPSå¼€å§‹çš„è¯å°±ç”¨GPSçš„é€Ÿåº¦è¯¯å·®ï¼Œå¦‚æœæ²¡æœ‰çš„è¯å°±ç”¨å‚æ•°æ‰€è®¾ç½®çš„å¯¹å‡†è¯¯å·®
 if (gps_alignment == 1)
     Sigma_velocity = gps_data.spd_error(gps_data.start_index) * [1;1;1];
 else

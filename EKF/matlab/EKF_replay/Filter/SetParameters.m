@@ -31,7 +31,7 @@ param.fusion.magFieldError = 0.05; % Magnetic field measurement 1SD error includ
 param.fusion.magHdgError = 0.1745; % Magnetic heading measurement 1SD error including hard and soft iron interference. Used when magFuseMethod = 2. (rad)
 param.fusion.magFieldGate = 5.0; % Size of the magnetic field innovation consistency check gate in SD
 param.fusion.magHdgGate = 5.0; % Size of the magnetic heading innovation consistency check gate in SD
-param.fusion.magDeclDeg = 10.5; % Magnetic declination in deg
+param.fusion.magDeclDeg = 10.5; % Magnetic declination in deg 磁偏角 磁北与真北之间的差值
 
 %% Optical flow measurement fusion
 param.fusion.rangeTimeDelay = 0.05; % range fidner sensor delay relative to IMU (sec)
@@ -48,7 +48,7 @@ param.fusion.bodyVelErrorMin = 0.1; % Observation noise 1SD for the odometry sen
 param.fusion.bodyVelErrorMax = 0.9; % Observation noise 1SD for the odometry sensor at the lowest quality value (m/sec)
 param.fusion.bodyVelGate = 5.0; % Size of the optical flow rate innovation consistency check gate in SD
 
-%% State prediction error growth(״̬�����е�������׼��)
+%% State prediction error growth(状态估计中的期望标准差)
 param.prediction.magPnoiseNED = 1e-3; % Earth magnetic field 1SD rate of change. (gauss/sec)
 param.prediction.magPnoiseXYZ = 1e-3; % Body magnetic field 1SD rate of change. (gauss/sec)
 param.prediction.dAngBiasPnoise = 0.001; % IMU gyro bias 1SD rate of change (rad/sec^2)

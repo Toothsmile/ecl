@@ -45,7 +45,7 @@ gravity = 9.80665; % initial value of gravity - will be updated when WGS-84 posi
 
 % initialise the state vector
 [states, imu_start_index] = InitStates(param,imu_data,gps_data,mag_data,baro_data);
-%Õâ¸ödt_imu_avg zÕâ¸ödtÊÇimuµÄ²âÁ¿ÀÛ»ıÊ±¼ä Õâ¸öÀ´ÏŞÖÆÆ«²î£¿£¿£¿
+%è¿™ä¸ªdt_imu_avg zè¿™ä¸ªdtæ˜¯imuçš„æµ‹é‡ç´¯ç§¯æ—¶é—´ è¿™ä¸ªæ¥é™åˆ¶åå·®ï¼Ÿï¼Ÿï¼Ÿ
 dt_imu_avg = 0.5 * (median(imu_data.gyro_dt) + median(imu_data.accel_dt));
 indexStop = length(imu_data.time_us) - imu_start_index;
 indexStart = 1;
@@ -90,19 +90,19 @@ last_viso_index = 0;
 viso_fuse_index = 0;
 last_range_index = 0;
 
-% covariance prediction variables %QÕóºÃÉÙ  ½Ç¶È ËÙ¶È dt£¿£¿%
-delAngCov = [0;0;0]; % delta angle vector used by the covariance prediction (rad) Í¨¹ıĞ­·½²îÔ¤²âÖ®ºóµÄ½Ç¶È±ä»¯ÏòÁ¿
+% covariance prediction variables %Qé˜µå¥½å°‘  è§’åº¦ é€Ÿåº¦ dtï¼Ÿï¼Ÿ%
+delAngCov = [0;0;0]; % delta angle vector used by the covariance prediction (rad) é€šè¿‡åæ–¹å·®é¢„æµ‹ä¹‹åçš„è§’åº¦å˜åŒ–å‘é‡
 delVelCov = [0;0;0]; % delta velocity vector used by the covariance prediction (m/sec)
-dtCov = 0; % time step used by the covariance prediction (sec) Ğ­·½²îÔ¤²âµÄÊ±¼ä²½³¤
-dtCovInt = 0; % accumulated time step of covariance predictions (sec) Ğ­·½²îÔ¤²âÖĞÀÛ»ıµÄÊ±¼ä²½³¤Í³¼Æ
+dtCov = 0; % time step used by the covariance prediction (sec) åæ–¹å·®é¢„æµ‹çš„æ—¶é—´æ­¥é•¿
+dtCovInt = 0; % accumulated time step of covariance predictions (sec) åæ–¹å·®é¢„æµ‹ä¸­ç´¯ç§¯çš„æ—¶é—´æ­¥é•¿ç»Ÿè®¡
 covIndex = 0; % covariance prediction frame counter
 
 output.magFuseMethod = param.fusion.magFuseMethod;
 range = 0.1;
 
-% variables used to control dead-reckoning timeout º½Î»ÍÆËãµÄÊ±¼äÏŞÖÆ
-last_drift_constrain_time = - param.control.velDriftTimeLim;%Õâ¸öµØ·½ÎªÊ²Ã´Æ¯ÒÆÊ±¼äÎªÊ²Ã´ÒªµÈÓÚ-µÄËÙ¶ÈÆ¯ÒÆÎó²îÏŞÖÆÄØ
-last_synthetic_velocity_fusion_time = 0;%×îºóËÙ¶ÈºÏ³ÉµÄÈÚºÏÊ±¼ä
+% variables used to control dead-reckoning timeout èˆªä½æ¨ç®—çš„æ—¶é—´é™åˆ¶
+last_drift_constrain_time = - param.control.velDriftTimeLim;%è¿™ä¸ªåœ°æ–¹ä¸ºä»€ä¹ˆæ¼‚ç§»æ—¶é—´ä¸ºä»€ä¹ˆè¦ç­‰äº-çš„é€Ÿåº¦æ¼‚ç§»è¯¯å·®é™åˆ¶å‘¢
+last_synthetic_velocity_fusion_time = 0;%æœ€åé€Ÿåº¦åˆæˆçš„èåˆæ—¶é—´
 last_valid_range_time = - param.fusion.rngTimeout;
 
 for index = indexStart:indexStop
@@ -111,19 +111,19 @@ for index = indexStart:indexStop
     local_time=imu_data.time_us(imuIndex)*1e-6;
     delta_angle(:,1) = imu_data.del_ang(imuIndex,:);
     delta_velocity(:,1) = imu_data.del_vel(imuIndex,:);
-    dt_imu = 0.5 * (imu_data.accel_dt(imuIndex) + imu_data.gyro_dt(imuIndex));%Õâ¸öÊÇÊ²Ã´ÒâË¼ ÊÇ²ÉÑùµÄ¼ä¸ôÂï
+    dt_imu = 0.5 * (imu_data.accel_dt(imuIndex) + imu_data.gyro_dt(imuIndex));%è¿™ä¸ªæ˜¯ä»€ä¹ˆæ„æ€ æ˜¯é‡‡æ ·çš„é—´éš”å˜›
     imuIndex = imuIndex+1;
     
     % predict states
     [states, delAngCorrected, delVelCorrected]  = PredictStates(states,delta_angle,delta_velocity,imu_data.accel_dt(imuIndex),gravity,gps_data.refLLH(1,1)*deg2rad);
     
-    % constrain states ÏŞÖÆÍÓÂİÒÇÓë¼ÓËÙ¶ÈÆ«²îÏŞÖÆ£¨£©²»ÊÇÄÜ¿´¶®
+    % constrain states é™åˆ¶é™€èºä»ªä¸åŠ é€Ÿåº¦åå·®é™åˆ¶ï¼ˆï¼‰ä¸æ˜¯èƒ½çœ‹æ‡‚
     [states]  = ConstrainStates(states,dt_imu_avg);
     
     dtCov = dtCov + dt_imu;%
     delAngCov = delAngCov + delAngCorrected;%
     delVelCov = delVelCov + delVelCorrected;
-    if (dtCov > 0.01)%ÎªÊ²Ã´ÉèÖÃÁËÒ»¸ö0.01µÄãĞÖµ£¬0.01ÄÑµÀÊÇGPSµÄ²ÉÑùÆÀÂÊ£¬ÎªÉ¶0.01²Å¿ÉÒÔ½øĞĞ·½²î¹À¼ÆÄØ
+    if (dtCov > 0.01)%ä¸ºä»€ä¹ˆè®¾ç½®äº†ä¸€ä¸ª0.01çš„é˜ˆå€¼ï¼Œ0.01éš¾é“æ˜¯GPSçš„é‡‡æ ·è¯„ç‡ï¼Œä¸ºå•¥0.01æ‰å¯ä»¥è¿›è¡Œæ–¹å·®ä¼°è®¡å‘¢
         % predict covariance
         covariance  = PredictCovariance(delAngCov,delVelCov,states,covariance,dtCov,param);
         delAngCov = [0;0;0];
@@ -132,7 +132,7 @@ for index = indexStart:indexStop
         dtCov = 0;
         covIndex = covIndex + 1;
         
-        % output state data Êä³ö×´Ì¬Êı¾İ
+        % output state data è¾“å‡ºçŠ¶æ€æ•°æ®
         output.time_lapsed(covIndex) = local_time;
         output.euler_angles(covIndex,:) = QuatToEul(states(1:4)')';
         output.velocity_NED(covIndex,:) = states(5:7)';
@@ -143,7 +143,7 @@ for index = indexStart:indexStop
         output.mag_XYZ(covIndex,:) = states(20:22);
         output.wind_NE(covIndex,:) = states(23:24);
         
-        % output covariance data Êä³öĞ­·½²îÊı¾İ
+        % output covariance data è¾“å‡ºåæ–¹å·®æ•°æ®
         for i=1:24
             output.state_variances(covIndex,i) = covariance(i,i);
         end
@@ -156,11 +156,11 @@ for index = indexStart:indexStop
         end
         
         % Get most recent GPS data that had fallen behind the fusion time
-        % horizon Ñ°ÕÒGPSÊ±¼ä<imu¿ªÊ¼Ê±¼ä£¬Ñ°ÕÒ×î½Ó½ü×îĞÂµÄÊ±¼äµã latest£º×î½Ó½ü ×îĞÂµÄ
+        % horizon å¯»æ‰¾GPSæ—¶é—´<imuå¼€å§‹æ—¶é—´ï¼Œå¯»æ‰¾æœ€æ¥è¿‘æœ€æ–°çš„æ—¶é—´ç‚¹ latestï¼šæœ€æ¥è¿‘ æœ€æ–°çš„
         latest_gps_index = find((gps_data.time_us - 1e6 * param.fusion.gpsTimeDelay) < imu_data.time_us(imuIndex), 1, 'last' );
         
         if ~isempty(latest_gps_index)
-            % Check if GPS use is being blocked by the user ÅĞ¶ÏGPSÊı¾İÃ»ÓĞ±»ÓÃ»§¶Ï¿ª
+            % Check if GPS use is being blocked by the user åˆ¤æ–­GPSæ•°æ®æ²¡æœ‰è¢«ç”¨æˆ·æ–­å¼€
             if ((local_time < param.control.gpsOnTime) && (local_time > param.control.gpsOffTime))
                 gps_use_started = false;
                 gps_use_blocked = true;
@@ -169,7 +169,7 @@ for index = indexStart:indexStop
             end
             
             % If we haven't started using GPS, check that the quality is sufficient before aligning the position and velocity states to GPS
-            %Èç¹ûÃ»ÓĞÊ¹ÓÃGPS¿ªÊ¼£¬ĞèÒª¼ì²âÏÂÊ¹ÓÃµÄGPSÊı¾İÊÇ·ñĞ¡ÓÚ²ÎÊıËùÉèÖÃµÄ¿ØÖÆÎó²î£¨gpsËÙ¶ÈÎ»ÖÃÎó²îÏŞÖÆ£©£¬Èç¹ûĞ¡ÓÚ¼´¿ªÊ¼GPSfuse
+            %å¦‚æœæ²¡æœ‰ä½¿ç”¨GPSå¼€å§‹ï¼Œéœ€è¦æ£€æµ‹ä¸‹ä½¿ç”¨çš„GPSæ•°æ®æ˜¯å¦å°äºå‚æ•°æ‰€è®¾ç½®çš„æ§åˆ¶è¯¯å·®ï¼ˆgpsé€Ÿåº¦ä½ç½®è¯¯å·®é™åˆ¶ï¼‰ï¼Œå¦‚æœå°äºå³å¼€å§‹GPSfuse
             if (~gps_use_started && ~gps_use_blocked)
                 if ((gps_data.spd_error(latest_gps_index) < param.control.gpsSpdErrLim) && (gps_data.pos_error(latest_gps_index) < param.control.gpsPosErrLim))
                     states(5:7) = gps_data.vel_ned(latest_gps_index,:);
@@ -180,10 +180,10 @@ for index = indexStart:indexStop
             end
             
             % Fuse GPS data when available if GPS use has started
-            if (gps_use_started && ~gps_use_blocked && (latest_gps_index > last_gps_index))%Õâ¸öÅĞ¶ÏÊÇ ·ÀÖ¹ÓÃÉÏÖØ¸´µÄgpsÊı¾İ
+            if (gps_use_started && ~gps_use_blocked && (latest_gps_index > last_gps_index))%è¿™ä¸ªåˆ¤æ–­æ˜¯ é˜²æ­¢ç”¨ä¸Šé‡å¤çš„gpsæ•°æ®
                 last_gps_index = latest_gps_index;
                 gps_fuse_index = gps_fuse_index + 1;
-                last_drift_constrain_time = local_time;%Õâ¸ödrifttimeÊÇÓÃÓÚÆ¯ÒÆµÄÀ´¼ì²âÏŞÖÆµÄ£¬µÚÒ»»ØÀ´±ØÈ»ÊÇÓÃloacltime¸³Öµ
+                last_drift_constrain_time = local_time;%è¿™ä¸ªdrifttimeæ˜¯ç”¨äºæ¼‚ç§»çš„æ¥æ£€æµ‹é™åˆ¶çš„ï¼Œç¬¬ä¸€å›æ¥å¿…ç„¶æ˜¯ç”¨loacltimeèµ‹å€¼
                 
                 % fuse NED GPS velocity
                 [states,covariance,velInnov,velInnovVar] = FuseVelocity(states,covariance,gps_data.vel_ned(latest_gps_index,:),param.fusion.gpsVelGate,gps_data.spd_error(latest_gps_index));
@@ -202,8 +202,8 @@ for index = indexStart:indexStop
                 output.innovations.posInnovVar(gps_fuse_index,:) = posInnovVar';
             else
                 % Check if drift is being corrected by some form of aiding and if not, fuse in a zero position measurement at 5Hz to prevent states diverging
-                %Í¨¹ıÄ³ÖÖĞÎÊ½µÄ¸¨Öú¼ì²éÊÇ·ñÕıÔÚĞ£ÕıÆ¯ÒÆ£¬Èç¹ûÃ»ÓĞ£¬ÔòÔÚ5HzµÄ&&&ÁãÎ»²âÁ¿&&&ÖĞÈÚºÏÒÔ·ÀÖ¹×´Ì¬·¢É¢
-                if ((local_time - last_drift_constrain_time) > param.control.velDriftTimeLim)%Ö®Ç°µÄlast_drift_constrain_time
+                %é€šè¿‡æŸç§å½¢å¼çš„è¾…åŠ©æ£€æŸ¥æ˜¯å¦æ­£åœ¨æ ¡æ­£æ¼‚ç§»ï¼Œå¦‚æœæ²¡æœ‰ï¼Œåˆ™åœ¨5Hzçš„&&&é›¶ä½æµ‹é‡&&&ä¸­èåˆä»¥é˜²æ­¢çŠ¶æ€å‘æ•£
+                if ((local_time - last_drift_constrain_time) > param.control.velDriftTimeLim)%ä¹‹å‰çš„last_drift_constrain_time
                     if ((local_time - last_synthetic_velocity_fusion_time) > 0.2)
                         [states,covariance,~,~] = FusePosition(states,covariance,zeros(1,2),100.0,param.control.gpsPosErrLim);
                         last_synthetic_velocity_fusion_time = local_time;
@@ -342,7 +342,7 @@ for index = indexStart:indexStop
         
     end
     
-    % update average delta time estimate£¿£¿£¿£¿
+    % update average delta time estimateï¼Ÿï¼Ÿï¼Ÿï¼Ÿ
     output.dt = dtCovInt / covIndex;
     
 end

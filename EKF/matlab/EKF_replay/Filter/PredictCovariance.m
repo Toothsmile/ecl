@@ -48,16 +48,16 @@ Q = calcQ24(daxVar,dayVar,dazVar,dvxVar,dvyVar,dvzVar,q0,q1,q2,q3);
 P = F*P*transpose(F) + Q;
 
 % Add the general process noise variance
-for i = 1:24 %Îª¼ÓËÙ¶È¼ÆÍÓÂİÒÇµÄÔ¤²â²Ğ²î
+for i = 1:24 %ä¸ºåŠ é€Ÿåº¦è®¡é™€èºä»ªçš„é¢„æµ‹æ®‹å·®
     P(i,i) = P(i,i) + processNoiseVariance(i);
 end
 
 % Force symmetry on the covariance matrix to prevent ill-conditioning
 % of the matrix which would cause the filter to blow-up
-%Ç¿ÖÆĞ­·½²î¾ØÕó¶Ô³Æ£¬·ÀÖ¹¾ØÕóµÄ´íÎóÅäÖÃµ¼ÖÂÂË²¨±¬Õ¨
+%å¼ºåˆ¶åæ–¹å·®çŸ©é˜µå¯¹ç§°ï¼Œé˜²æ­¢çŸ©é˜µçš„é”™è¯¯é…ç½®å¯¼è‡´æ»¤æ³¢çˆ†ç‚¸
 P = 0.5*(P + transpose(P));
 
-% ensure diagonals are positiveÈ·±£diag¶¼´óÓÚ0
+% ensure diagonals are positiveç¡®ä¿diagéƒ½å¤§äº0
 for i=1:24
     if P(i,i) < 0
         P(i,i) = 0;
