@@ -62,6 +62,7 @@ struct gps_message {
 	float eph;		///< GPS horizontal position accuracy in m
 	float epv;		///< GPS vertical position accuracy in m
 	float sacc;		///< GPS speed accuracy in m/s
+        float cog_rad;          ///< GPS yaw by double anttna by sjj
 	float vel_m_s;		///< GPS ground speed (m/sec)
 	float vel_ned[3];	///< GPS ground speed NED
 	bool vel_ned_valid;	///< GPS ground speed is valid

@@ -128,8 +128,8 @@ public:
 		// start looking from newest observation data
 		for (uint8_t i = 0; i < _size; i++) {
 			int index = (_head - i);
-			index = index < 0 ? _size + index : index;
-
+                        index = index < 0 ? _size + index : index;//这个size是当前类型数据的在buff中的起始位置
+                        //这个地方是相差小于0.1秒即可   第一个参数是传进来当前类型（比如imu）buf中最旧的数据
 			if (timestamp >= _buffer[index].time_us && timestamp - _buffer[index].time_us < (uint64_t)1e5) {
 
 				*sample = _buffer[index];

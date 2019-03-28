@@ -100,7 +100,7 @@ bool Ekf::init(uint64_t timestamp)
 bool Ekf::update()
 {
 	if (!_filter_initialised) {
-		_filter_initialised = initialiseFilter();
+        _filter_initialised = initialiseFilter();//至少积累传感器10个采样值
 
 		if (!_filter_initialised) {
 			return false;
@@ -139,27 +139,28 @@ bool Ekf::initialiseFilter()
 	// Keep accumulating measurements until we have a minimum of 10 samples for the required sensors
 
 	// Sum the IMU delta angle measurements
-	const imuSample &imu_init = _imu_buffer.get_newest();
-	_delVel_sum += imu_init.delta_vel;
+    const imuSample &imu_init = _imu_buffer.get_newest();// 这个应该是ekf2——set函数进来的数据
+    _delVel_sum += imu_init.delta_vel;//delVel_sum是一个vector3的数组
 
-	// Sum the magnetometer measurements
-	if (_mag_buffer.pop_first_older_than(_imu_sample_delayed.time_us, &_mag_sample_delayed)) {
+    // Sum the magnetometer measurements   _imu_sample_delayed在ekf2.cpp的setimu函数中赋值取最旧的数据，
+    //_mag_sample_delayed是该函数赋值的
+    if (_mag_buffer.pop_first_older_than(_imu_sample_delayed.time_us, &_mag_sample_delayed)) {//pop_first_older_than寻找最新的数据
 		if ((_mag_counter == 0) && (_mag_sample_delayed.time_us != 0)) {
 			// initialise the counter when we start getting data from the buffer
 			_mag_counter = 1;
 
 		} else if ((_mag_counter != 0) && (_mag_sample_delayed.time_us != 0)) {
-			// increment the sample count and apply a LPF to the measurement
-			_mag_counter ++;
+            // increment the sample count and apply a LPF to the measurement
+            _mag_counter ++;
 
 			// don't start using data until we can be certain all bad initial data has been flushed
 			if (_mag_counter == (uint8_t)(_obs_buffer_length + 1)) {
 				// initialise filter states
 				_mag_filt_state = _mag_sample_delayed.mag;
 
-			} else if (_mag_counter > (uint8_t)(_obs_buffer_length + 1)) {
+            } else if (_mag_counter > (uint8_t)(_obs_buffer_length + 1)) {//当值大于观测buff，相当于刷新
 				// noise filter the data
-				_mag_filt_state = _mag_filt_state * 0.9f + _mag_sample_delayed.mag * 0.1f;
+                _mag_filt_state = _mag_filt_state * 0.9f + _mag_sample_delayed.mag * 0.1f;//低通滤波啊
 			}
 		}
 	}

@@ -596,7 +596,7 @@ bool Ekf::resetMagHeading(Vector3f &mag_init)
 		// Calculate the 312 sequence euler angles that rotate from earth to body frame
 		// See http://www.atacolorado.com/eulersequences.doc
 		Vector3f euler312;
-		euler312(0) = atan2f(-_R_to_earth(0, 1), _R_to_earth(1, 1));  // first rotation (yaw)
+        euler312(0) = atan2f(-_R_to_earth(0, 1), _R_to_earth(1, 1));  // first rotation (yaw)
 		euler312(1) = asinf(_R_to_earth(2, 1)); // second rotation (roll)
 		euler312(2) = atan2f(-_R_to_earth(2, 0), _R_to_earth(2, 2));  // third rotation (pitch)
 
@@ -705,7 +705,7 @@ bool Ekf::resetMagHeading(Vector3f &mag_init)
 		_R_to_earth = quat_to_invrotmat(_state.quat_nominal);
 
 		// reset the rotation from the EV to EKF frame of reference if it is being used
-		if ((_params.fusion_mode & MASK_ROTATE_EV) && (_params.fusion_mode & MASK_USE_EVPOS) && !_control_status.flags.ev_yaw) {
+        if ((_params.fusion_mode & MASK_ROTATE_EV) && (_params.fusion_mode & MASK_USE_EVPOS) && !_control_status.flags.ev_yaw) {
 			resetExtVisRotMat();
 		}
 
@@ -1582,7 +1582,7 @@ void Ekf::resetExtVisRotMat()
 	q_error.normalize();
 
 	// convert to a delta angle and reset
-	Vector3f rot_vec = q_error.to_axis_angle();
+    Vector3f rot_vec = q_error.to_axis_angle();//之前计算mag的delta_ang时为什么不用这个函数，反而再写了一次
 
 	float rot_vec_norm = rot_vec.norm();
 
