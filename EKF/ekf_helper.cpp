@@ -552,6 +552,7 @@ bool Ekf::resetMagHeading(Vector3f &mag_init)
 
 	if (_params.mag_fusion_type >= MAG_FUSE_TYPE_NONE) {
 		// do not use the magnetomer and deactivate magnetic field states
+        ECL_INFO(" do not use the magnetomer and deactivate magnetic field states");//by sjj
 		zeroRows(P, 16, 21);
 		zeroCols(P, 16, 21);
 		_control_status.flags.mag_hdg = false;
