@@ -1,9 +1,9 @@
 
-file_tmp='./11-7 test mag_data/02_02_48';
+file_tmp='../TestData/benkebishe/00_28_38_road';
 %% convert baro data
 clear baro_data;
 baro=csvread([file_tmp '_vehicle_air_data_0.csv'],1,0);
-%赋值
+%赋�?
 timestamp=baro(:,1);
 baro_alt_meter=baro(:,2);
 last_time = 0;
@@ -13,7 +13,7 @@ for source_index = 1:length(timestamp)
      baro_timestamp = timestamp(source_index);
     if (baro_timestamp ~= last_time)
         baro_data.time_us(output_index,1) = baro_timestamp;
-        baro_data.height(output_index) = baro_alt_meter(source_index);%height data 怎么是横的数据
+        baro_data.height(output_index) = baro_alt_meter(source_index);%height data 怎么是横的数�?
         last_time = baro_timestamp;
         output_index = output_index + 1;
     end
@@ -24,7 +24,7 @@ end
 % the integral_dt values in the PX4 sensor module so we only need to
 % multiply by integral_dt to convert back
 clear imu_data;
-%赋值
+%赋�?
 imu=csvread([file_tmp '_sensor_combined_0.csv'],1,0);
 timestamp=imu(:,1);
 accelerometer_timestamp_relative=imu(:,6);
@@ -48,7 +48,7 @@ imu_data.del_vel = [accelerometer_m_s20.*imu_data.accel_dt, accelerometer_m_s21.
 %% convert magnetomer data
 clear mag_data;
 mag=csvread([file_tmp '_vehicle_magnetometer_0.csv'],1,0);
-%赋值 
+%赋�? 
 timestamp=mag(:,1);
 magnetometer_ga0=mag(:,2);
 magnetometer_ga1=mag(:,3);
@@ -72,19 +72,19 @@ save mag_data.mat mag_data;
 
 clear gps_data;
 gps=csvread([file_tmp '_vehicle_gps_position_0.csv'],1,0);
-%赋值
+%赋�?
 timestamp=gps(:,1);
 timestamp_time_relative=gps(:,20);
-eph=gps(:,9);
-s_variance_m_s=gps(:,7);
-epv=gps(:,10);
+eph=gps(:,12);
+s_variance_m_s=gps(:,12);
+epv=gps(:,13);
 lat=gps(:,3);
 lon=gps(:,4);
 alt=gps(:,5);
-vel_n_m_s=gps(:,15);
-vel_e_m_s=gps(:,16);
-vel_d_m_s=gps(:,17);
-fix_type=gps(:,21);
+vel_n_m_s=gps(:,19);
+vel_e_m_s=gps(:,20);
+vel_d_m_s=gps(:,21);
+fix_type=gps(:,24)
 
 gps_data.time_us = timestamp + timestamp_time_relative;
 gps_data.pos_error = eph;
@@ -105,6 +105,7 @@ for index = 1:length(timestamp)
     if (fix_type(index) >= 3)
         gps_data.pos_ned(index,:) = LLH2NED([1e-7*lat(index);1e-7*lon(index);0.001*alt(index)],gps_data.refLLH);
         gps_data.vel_ned(index,:) = [vel_n_m_s(index),vel_e_m_s(index),vel_d_m_s(index)];
+        
     else
         gps_data.pos_ned(index,:) = [0,0,0];
         gps_data.vel_ned(index,:) = [0,0,0];

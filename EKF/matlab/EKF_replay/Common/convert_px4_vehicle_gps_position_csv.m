@@ -15,7 +15,7 @@ end
 
 % convert GPS data to NED
 for index = 1:length(timestamp)
-    if (fix_type(index) >= 3)
+    if (fix_type(index) >= 4)
         gps_data.pos_ned(index,:) = LLH2NED([1e-7*lat(index);1e-7*lon(index);0.001*alt(index)],gps_data.refLLH);
         gps_data.vel_ned(index,:) = [vel_n_m_s(index),vel_e_m_s(index),vel_d_m_s(index)];
     else

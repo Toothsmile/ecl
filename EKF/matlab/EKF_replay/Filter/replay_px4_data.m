@@ -5,10 +5,10 @@ close all;
 addpath('../Common');
 
 % load test data
-load '../TestData/csv_data/11-7-Office-testMag-Data/baro_data.mat';
-load '../TestData/csv_data/11-7-Office-testMag-Data/gps_data.mat';
-load '../TestData/csv_data/11-7-Office-testMag-Data/imu_data.mat';
-load '../TestData/csv_data/11-7-Office-testMag-Data/mag_data.mat';
+load '../TestData/benkebishe/baro_data.mat';
+load '../TestData/benkebishe/gps_data.mat';
+load '../TestData/benkebishe/imu_data.mat';
+load '../TestData/benkebishe/mag_data.mat';
 
 % set parameters to default values
 run('SetParameters.m');
@@ -18,7 +18,7 @@ output = RunFilter(param,imu_data,mag_data,baro_data,gps_data);
 
 % generate and save output plots
 runIdentifier = ' : PX4 data replay ';
-folder = strcat('../OutputPlots/11-7-Office-testMag-Data-PX4');
+folder = strcat('../OutputPlots/rtk');
 PlotData(output,folder,runIdentifier);
 
 % save output data
@@ -28,3 +28,7 @@ if ~exist(folder,'dir')
     mkdir(folder);
 end
 save(fileName,'output');
+
+%by sjj
+figure,plot(gps_data.pos_ned(:,1),gps_data.pos_ned(:,2),'.');
+figure,plot(output.position_NED(:,1),output.position_NED(:,2),'.');

@@ -1,5 +1,5 @@
 %% Filter Control
-param.control.waitForGps = 0; % set to 1 if the filter start should be delayed until GPS checks to pass
+param.control.waitForGps = 1; % set to 1 if the filter start should be delayed until GPS checks to pass
 param.control.gpsSpdErrLim = 1.0; % GPS use will not start if reported GPS speed error is greater than this (m/s)
 param.control.gpsPosErrLim = 5.0; % GPS use will not start if reported GPS position error is greater than this (m)
 param.control.velDriftTimeLim = 5.0; % The maximum time without observations to constrain velocity drift before a zero velocity is fused to prevent the filter diverging (sec)
@@ -26,12 +26,12 @@ param.fusion.baroHgtNoise = 2.0; % 1SD observation noise of the baro measurement
 
 %% Magnetometer measurement fusion
 param.fusion.magTimeDelay = 0.0; % Magnetomer time delay relative to IMU (sec)
-param.fusion.magFuseMethod = 1; % 0: 3-Axis field fusion with free declination, 1: 3-Axis field fusion with constrained declination, 2: magnetic heading fusion. (None)
+param.fusion.magFuseMethod = 2; % 0: 3-Axis field fusion with free declination, 1: 3-Axis field fusion with constrained declination, 2: magnetic heading fusion. (None)
 param.fusion.magFieldError = 0.05; % Magnetic field measurement 1SD error including hard and soft iron interference. Used when magFuseMethod = 0 or 1. (gauss)
 param.fusion.magHdgError = 0.1745; % Magnetic heading measurement 1SD error including hard and soft iron interference. Used when magFuseMethod = 2. (rad)
 param.fusion.magFieldGate = 5.0; % Size of the magnetic field innovation consistency check gate in SD
 param.fusion.magHdgGate = 5.0; % Size of the magnetic heading innovation consistency check gate in SD
-param.fusion.magDeclDeg = 10.5; % Magnetic declination in deg 磁偏角 磁北与真北之间的差值
+param.fusion.magDeclDeg = 10.5; % Magnetic declination in deg 磁偏�?磁北与真北之间的差�?
 
 %% Optical flow measurement fusion
 param.fusion.rangeTimeDelay = 0.05; % range fidner sensor delay relative to IMU (sec)
@@ -48,7 +48,7 @@ param.fusion.bodyVelErrorMin = 0.1; % Observation noise 1SD for the odometry sen
 param.fusion.bodyVelErrorMax = 0.9; % Observation noise 1SD for the odometry sensor at the lowest quality value (m/sec)
 param.fusion.bodyVelGate = 5.0; % Size of the optical flow rate innovation consistency check gate in SD
 
-%% State prediction error growth(状态估计中的期望标准差)
+%% State prediction error growth(状�?估计中的期望标准�?
 param.prediction.magPnoiseNED = 1e-3; % Earth magnetic field 1SD rate of change. (gauss/sec)
 param.prediction.magPnoiseXYZ = 1e-3; % Body magnetic field 1SD rate of change. (gauss/sec)
 param.prediction.dAngBiasPnoise = 0.001; % IMU gyro bias 1SD rate of change (rad/sec^2)
