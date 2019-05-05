@@ -160,6 +160,8 @@ void Ekf::fuseGpsAntYaw()
 		_heading_innov_var += H_YAW[row] * PH[row];
 	}
 
+    printf("heading_innov:%f",(double)wrap_pi(_heading_innov));//printf mag Innovation by sjj
+
 	float heading_innov_var_inv;
 
 	// check if the innovation variance calculation is badly conditioned
@@ -293,7 +295,8 @@ void Ekf::fuseGpsAntYaw()
 bool Ekf::resetGpsAntYaw()
 {
 	// check if data has been set to NAN indicating no measurement
-	if (ISFINITE(_gps_sample_delayed.yaw)) {
+    if (ISFINITE(_gps_sample_delayed.yaw)) {
+    //if (ISFINITE(_gps_sample_delayed.yaw)&&_gps_sample_delayed.yaw_flag==5) {//by sjj
 
 		// define the predicted antenna array vector and rotate into earth frame
 		Vector3f ant_vec_bf = {cosf(_gps_yaw_offset), sinf(_gps_yaw_offset), 0.0f};

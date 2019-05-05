@@ -61,6 +61,7 @@ struct gps_message {
 	int32_t alt;		///< Altitude in 1E-3 meters (millimeters) above MSL
 	float yaw;		///< yaw angle. NaN if not set (used for dual antenna GPS), (rad, [-PI, PI])
 	float yaw_offset;	///< Heading/Yaw offset for dual antenna GPS - refer to description for GPS_YAW_OFFSET
+        uint8_t yaw_flag;       ///< 3:heading is bad;5:heading dixed by sjj
 	uint8_t fix_type;	///< 0-1: no fix, 2: 2D fix, 3: 3D fix, 4: RTCM code differential, 5: Real-Time Kinematic
 	float eph;		///< GPS horizontal position accuracy in m
 	float epv;		///< GPS vertical position accuracy in m
@@ -114,6 +115,7 @@ struct gpsSample {
 	float       hgt;	///< gps height measurement (m)
 	Vector3f    vel;	///< NED earth frame gps velocity measurement (m/sec)
 	float	    yaw;	///< yaw angle. NaN if not set (used for dual antenna GPS), (rad, [-PI, PI])
+        uint8_t yaw_flag;       ///< 3:heading is bad;5:heading dixed by sjj
 	float	    hacc;	///< 1-std horizontal position error (m)
 	float	    vacc;	///< 1-std vertical position error (m)
 	float       sacc;	///< 1-std speed error (m/sec)
