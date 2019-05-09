@@ -160,7 +160,7 @@ void Ekf::fuseGpsAntYaw()
 		_heading_innov_var += H_YAW[row] * PH[row];
 	}
 
-    printf("heading_innov:%f",(double)wrap_pi(_heading_innov));//printf mag Innovation by sjj
+    //printf("heading_innov:%f",(double)wrap_pi(_heading_innov));//printf mag Innovation by sjj
 
 	float heading_innov_var_inv;
 
