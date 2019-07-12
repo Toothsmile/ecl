@@ -5,13 +5,13 @@ close all;
 addpath('../Common');
 
 % load test data
-load '../TestData/PX4/baro_data.mat';
-load '../TestData/PX4/gps_data.mat';
-load '../TestData/PX4/imu_data.mat';
-load '../TestData/PX4/mag_data.mat';
+load '../TestData/benkebishe/baro_data.mat';
+load '../TestData/benkebishe/gps_data.mat';
+load '../TestData/benkebishe/imu_data.mat';
+load '../TestData/benkebishe/mag_data.mat';
 
 % set parameters to default values
-run('SetParameterDefaults.m');
+run('SetParameters.m');
 
 % Loop through range of GPS time delays and capture the RMS velocity
 % innovation and corresponding delay each time

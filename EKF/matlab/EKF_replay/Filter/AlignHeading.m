@@ -2,7 +2,7 @@ function quat = AlignHeading( ...
     quat, ... % quaternion state vector
     magMea, ... % body frame magnetic flux measurements 
     declination)  % Estimated magnetic field delination at current location (rad)
-%将四元数的姿态中的yaw方向设置为0并转移到大地坐标系中
+%将四元数的姿态中的yaw方向设置�?并转移到大地坐标系中
 
 % Get the Euler angles and set yaw to zero
 euler = QuatToEul(quat);

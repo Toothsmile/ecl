@@ -45,7 +45,7 @@ gravity = 9.80665; % initial value of gravity - will be updated when WGS-84 posi
 
 % initialise the state vector
 [states, imu_start_index] = InitStates(param,imu_data,gps_data,mag_data,baro_data);
-%这个dt_imu_avg z这个dt是imu的测量累积时间 这个来限制偏差？？？
+%这个dt_imu_avg z这个dt是imu的测量累积时�?这个来限制偏差？？？
 dt_imu_avg = 0.5 * (median(imu_data.gyro_dt) + median(imu_data.accel_dt));
 indexStop = length(imu_data.time_us) - imu_start_index;
 indexStart = 1;
@@ -90,19 +90,19 @@ last_viso_index = 0;
 viso_fuse_index = 0;
 last_range_index = 0;
 
-% covariance prediction variables %Q阵好少  角度 速度 dt？？%
+% covariance prediction variables %Q阵好�? 角度 速度 dt？？%
 delAngCov = [0;0;0]; % delta angle vector used by the covariance prediction (rad) 通过协方差预测之后的角度变化向量
 delVelCov = [0;0;0]; % delta velocity vector used by the covariance prediction (m/sec)
 dtCov = 0; % time step used by the covariance prediction (sec) 协方差预测的时间步长
-dtCovInt = 0; % accumulated time step of covariance predictions (sec) 协方差预测中累积的时间步长统计
+dtCovInt = 0; % accumulated time step of covariance predictions (sec) 协方差预测中累积的时间步长统�?
 covIndex = 0; % covariance prediction frame counter
 
 output.magFuseMethod = param.fusion.magFuseMethod;
 range = 0.1;
 
-% variables used to control dead-reckoning timeout 航位推算的时间限制
-last_drift_constrain_time = - param.control.velDriftTimeLim;%这个地方为什么漂移时间为什么要等于-的速度漂移误差限制呢
-last_synthetic_velocity_fusion_time = 0;%最后速度合成的融合时间
+% variables used to control dead-reckoning timeout 航位推算的时间限�?
+last_drift_constrain_time = - param.control.velDriftTimeLim;%这个地方为什么漂移时间为�?��要等�?的�?度漂移误差限制呢
+last_synthetic_velocity_fusion_time = 0;%�?��速度合成的融合时�?
 last_valid_range_time = - param.fusion.rngTimeout;
 
 for index = indexStart:indexStop
@@ -111,19 +111,19 @@ for index = indexStart:indexStop
     local_time=imu_data.time_us(imuIndex)*1e-6;
     delta_angle(:,1) = imu_data.del_ang(imuIndex,:);
     delta_velocity(:,1) = imu_data.del_vel(imuIndex,:);
-    dt_imu = 0.5 * (imu_data.accel_dt(imuIndex) + imu_data.gyro_dt(imuIndex));%这个是什么意思 是采样的间隔嘛
+    dt_imu = 0.5 * (imu_data.accel_dt(imuIndex) + imu_data.gyro_dt(imuIndex));%这个是什么意�?是采样的间隔�?
     imuIndex = imuIndex+1;
     
     % predict states
     [states, delAngCorrected, delVelCorrected]  = PredictStates(states,delta_angle,delta_velocity,imu_data.accel_dt(imuIndex),gravity,gps_data.refLLH(1,1)*deg2rad);
     
-    % constrain states 限制陀螺仪与加速度偏差限制（）不是能看懂
+    % constrain states 限制�?��仪与加�?度偏差限制（）不是能看懂
     [states]  = ConstrainStates(states,dt_imu_avg);
     
     dtCov = dtCov + dt_imu;%
     delAngCov = delAngCov + delAngCorrected;%
     delVelCov = delVelCov + delVelCorrected;
-    if (dtCov > 0.01)%为什么设置了一个0.01的阈值，0.01难道是GPS的采样评率，为啥0.01才可以进行方差估计呢
+    if (dtCov > 0.004)%为什么设置了�?��0.01的阈值，0.01难道是GPS的采样评率，为啥0.01才可以进行方差估计呢
         % predict covariance
         covariance  = PredictCovariance(delAngCov,delVelCov,states,covariance,dtCov,param);
         delAngCov = [0;0;0];
@@ -132,7 +132,7 @@ for index = indexStart:indexStop
         dtCov = 0;
         covIndex = covIndex + 1;
         
-        % output state data 输出状态数据
+        % output state data 输出状�?数据
         output.time_lapsed(covIndex) = local_time;
         output.euler_angles(covIndex,:) = QuatToEul(states(1:4)')';
         output.velocity_NED(covIndex,:) = states(5:7)';
@@ -143,7 +143,7 @@ for index = indexStart:indexStop
         output.mag_XYZ(covIndex,:) = states(20:22);
         output.wind_NE(covIndex,:) = states(23:24);
         
-        % output covariance data 输出协方差数据
+        % output covariance data 输出协方差数�?
         for i=1:24
             output.state_variances(covIndex,i) = covariance(i,i);
         end
@@ -156,11 +156,11 @@ for index = indexStart:indexStop
         end
         
         % Get most recent GPS data that had fallen behind the fusion time
-        % horizon 寻找GPS时间<imu开始时间，寻找最接近最新的时间点 latest：最接近 最新的
+        % horizon 寻找GPS时间<imu�?��时间，寻找最接近�?��的时间点 latest：最接近 �?���?
         latest_gps_index = find((gps_data.time_us - 1e6 * param.fusion.gpsTimeDelay) < imu_data.time_us(imuIndex), 1, 'last' );
         
         if ~isempty(latest_gps_index)
-            % Check if GPS use is being blocked by the user 判断GPS数据没有被用户断开
+            % Check if GPS use is being blocked by the user 判断GPS数据没有被用户断�?
             if ((local_time < param.control.gpsOnTime) && (local_time > param.control.gpsOffTime))
                 gps_use_started = false;
                 gps_use_blocked = true;
@@ -169,7 +169,7 @@ for index = indexStart:indexStop
             end
             
             % If we haven't started using GPS, check that the quality is sufficient before aligning the position and velocity states to GPS
-            %如果没有使用GPS开始，需要检测下使用的GPS数据是否小于参数所设置的控制误差（gps速度位置误差限制），如果小于即开始GPSfuse
+            %如果没有使用GPS�?��，需要检测下使用的GPS数据是否小于参数�?��置的控制误差（gps速度位置误差限制），如果小于即开始GPSfuse
             if (~gps_use_started && ~gps_use_blocked)
                 if ((gps_data.spd_error(latest_gps_index) < param.control.gpsSpdErrLim) && (gps_data.pos_error(latest_gps_index) < param.control.gpsPosErrLim))
                     states(5:7) = gps_data.vel_ned(latest_gps_index,:);
@@ -180,10 +180,10 @@ for index = indexStart:indexStop
             end
             
             % Fuse GPS data when available if GPS use has started
-            if (gps_use_started && ~gps_use_blocked && (latest_gps_index > last_gps_index))%这个判断是 防止用上重复的gps数据
+            if (gps_use_started && ~gps_use_blocked && (latest_gps_index > last_gps_index))%这个判断�?防止用上重复的gps数据
                 last_gps_index = latest_gps_index;
                 gps_fuse_index = gps_fuse_index + 1;
-                last_drift_constrain_time = local_time;%这个drifttime是用于漂移的来检测限制的，第一回来必然是用loacltime赋值
+                last_drift_constrain_time = local_time;%这个drifttime是用于漂移的来检测限制的，第�?��来必然是用loacltime赋�?
                 
                 % fuse NED GPS velocity
                 [states,covariance,velInnov,velInnovVar] = FuseVelocity(states,covariance,gps_data.vel_ned(latest_gps_index,:),param.fusion.gpsVelGate,gps_data.spd_error(latest_gps_index));
@@ -194,7 +194,7 @@ for index = indexStart:indexStop
                 output.innovations.vel_innov_var(gps_fuse_index,:) = velInnovVar';
                 
                 % fuse NE GPS position
-                [states,covariance,posInnov,posInnovVar] = FusePosition(states,covariance,gps_data.pos_ned(latest_gps_index,:),param.fusion.gpsPosGate,gps_data.pos_error(latest_gps_index));
+                [states,covariance,posInnov,posInnovVar] = FusePosition(states,covariance,gps_data.pos_ned(latest_gps_index,:),param.fusion.gpsPosGate,gps_data.pos_error(latest_gps_index),gps_data.hgt_error(latest_gps_index));
                 
                 % data logging
                 output.innovations.pos_time_lapsed(gps_fuse_index) = local_time;
@@ -202,7 +202,7 @@ for index = indexStart:indexStop
                 output.innovations.posInnovVar(gps_fuse_index,:) = posInnovVar';
             else
                 % Check if drift is being corrected by some form of aiding and if not, fuse in a zero position measurement at 5Hz to prevent states diverging
-                %通过某种形式的辅助检查是否正在校正漂移，如果没有，则在5Hz的&&&零位测量&&&中融合以防止状态发散
+                %通过某种形式的辅助检查是否正在校正漂移，如果没有，则�?Hz�?&&零位测量&&&中融合以防止状�?发散
                 if ((local_time - last_drift_constrain_time) > param.control.velDriftTimeLim)%之前的last_drift_constrain_time
                     if ((local_time - last_synthetic_velocity_fusion_time) > 0.2)
                         [states,covariance,~,~] = FusePosition(states,covariance,zeros(1,2),100.0,param.control.gpsPosErrLim);
@@ -213,18 +213,20 @@ for index = indexStart:indexStop
         end
         
         % Fuse new Baro data that has fallen beind the fusion time horizon
-        latest_baro_index = find((baro_data.time_us - 1e6 * param.fusion.baroTimeDelay) < imu_data.time_us(imuIndex), 1, 'last' );
-        if (latest_baro_index > last_baro_index)
-            last_baro_index = latest_baro_index;
-            baro_fuse_index = baro_fuse_index + 1;
-            
-            % fuse baro height
-            [states,covariance,hgtInnov,hgtInnovVar] = FuseBaroHeight(states,covariance,baro_data.height(latest_baro_index),param.fusion.baroHgtGate,param.fusion.baroHgtNoise);
-            
-            % data logging
-            output.innovations.hgt_time_lapsed(baro_fuse_index) = local_time;
-            output.innovations.hgtInnov(baro_fuse_index) = hgtInnov;
-            output.innovations.hgtInnovVar(baro_fuse_index) = hgtInnovVar;
+        if(param.fusion.heightFuseMethod==0)
+            latest_baro_index = find((baro_data.time_us - 1e6 * param.fusion.baroTimeDelay) < imu_data.time_us(imuIndex), 1, 'last' );
+            if (latest_baro_index > last_baro_index)
+                last_baro_index = latest_baro_index;
+                baro_fuse_index = baro_fuse_index + 1;
+
+                % fuse baro height
+                [states,covariance,hgtInnov,hgtInnovVar] = FuseBaroHeight(states,covariance,baro_data.height(latest_baro_index),param.fusion.baroHgtGate,param.fusion.baroHgtNoise);
+
+                % data logging
+                output.innovations.hgt_time_lapsed(baro_fuse_index) = local_time;
+                output.innovations.hgtInnov(baro_fuse_index) = hgtInnov;
+                output.innovations.hgtInnovVar(baro_fuse_index) = hgtInnovVar;
+            end
         end
         
         % Fuse new mag data that has fallen behind the fusion time horizon

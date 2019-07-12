@@ -14,11 +14,13 @@ param.control.pitchAlignErr = 0.0; % initial pitch misalignment (rad)
 param.control.yawAlignErr = 0.0; % initial yaw misalignment (rad)
 
 %% GPS fusion
-param.fusion.gpsTimeDelay = 0.1; % GPS measurement delay relative to IMU (sec) %0.1%
+param.fusion.gpsTimeDelay = 0.14; % GPS measurement delay relative to IMU (sec) %0.1%
 param.fusion.gpsVelGate = 5.0; % Size of the IMU velocity innovation consistency check gate in SD
 param.fusion.gpsPosGate = 5.0; % Size of the IMU velocity innovation consistency check gate in SD
 param.fusion.gpsCheckTimeout = 10.0; % Length of time that GPS measurements will be rejected by the filter before states are reset to the GPS velocity. (sec)
 
+%% Height fusion
+param.fusion.heightFuseMethod=1;%0:baro height 1:rtkheight
 %% Baro fusion
 param.fusion.baroTimeDelay = 0.05; % Baro measurement delay relative to IMU (sec)
 param.fusion.baroHgtGate = 5.0; % Size of the IMU velocity innovation consistency check gate in SD

@@ -3,7 +3,7 @@ close all;
 
 % add required paths
 addpath('../Common');
-
+% record heading
 % load test data
 load '../TestData/benkebishe/baro_data.mat';
 load '../TestData/benkebishe/gps_data.mat';
@@ -30,5 +30,17 @@ end
 save(fileName,'output');
 
 %by sjj
+counter=1:length(output.position_NED);
 figure,plot(gps_data.pos_ned(:,1),gps_data.pos_ned(:,2),'.');
-figure,plot(output.position_NED(:,1),output.position_NED(:,2),'.');
+figure,plot(output.position_NED(:,1),output.position_NED(:,2),'.',gps_data.pos_ned(:,1),gps_data.pos_ned(:,2),'.');
+figure();
+plot(sqrt(output.state_variances(:,8)),'.');
+title('水平精度');
+figure();
+plot(sqrt(output.state_variances(:,10)),'.');
+title('竖直精度');
+
+%save NED data 
+
+localNED=[output.time_lapsed',output.position_NED];
+save local_road_NED.mat localNED ;

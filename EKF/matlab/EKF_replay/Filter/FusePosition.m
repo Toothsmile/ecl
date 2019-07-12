@@ -8,13 +8,17 @@ function [...
     P, ... % predicted covariance
     measPos, ... % NE position measurements (m)
     gateSize, ... % Size of the innovation consistency check gate (std-dev)
-    R_OBS) % position observation variance (m)^2
+    R_OBS,... % position observation variance (m)^2
+    R_HGT) %position height variance (m)^2
 %fuse position只估计了
-innovation = zeros(1,2);
-varInnov = zeros(1,2);
-H = zeros(2,24);
+% innovation = zeros(1,2);
+% varInnov = zeros(1,2);
+% H = zeros(2,24);
 
-for obsIndex = 1:2
+innovation = zeros(1,3);
+varInnov = zeros(1,3);
+H = zeros(3,24);
+for obsIndex = 1:3
     
     % velocity states start at index 8
     stateIndex = 7 + obsIndex;
@@ -24,14 +28,17 @@ for obsIndex = 1:2
     
     % Calculate the observation Jacobian
     H(obsIndex,stateIndex) = 1;
- 
-    varInnov(obsIndex) = (H(obsIndex,:)*P*transpose(H(obsIndex,:)) + R_OBS);%计算位置协方差
+    if(obsIndex~=3)
+        varInnov(obsIndex) = (H(obsIndex,:)*P*transpose(H(obsIndex,:)) + R_OBS);%计算位置协方�?
+    else
+        varInnov(obsIndex) = (H(obsIndex,:)*P*transpose(H(obsIndex,:)) + R_HGT);
+    end
     
 end
 
-% Apply an innovation consistency check 更新的一致性检查？？？
+% Apply an innovation consistency check 更新的一致�?�?��？？�?
 % 这个应该就是预测残差如果大于预测协方差的y则为滤波发散
-for obsIndex = 1:2
+for obsIndex = 1:3
     
     if (innovation(obsIndex)^2 / (gateSize^2 * varInnov(obsIndex))) > 1.0
         return;
@@ -40,7 +47,7 @@ for obsIndex = 1:2
 end
 
 % Calculate Kalman gains and update states and covariances
-for obsIndex = 1:2
+for obsIndex = 1:3
     
     % Calculate the Kalman gains 
     K = (P*transpose(H(obsIndex,:)))/varInnov(obsIndex);
