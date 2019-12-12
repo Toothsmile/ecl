@@ -97,7 +97,7 @@ bool Ekf::collect_gps(uint64_t time_usec, struct gps_message *gps)
 	}
 
 	// start collecting GPS if there is a 3D fix and the NED origin has been set
-	return _NED_origin_initialised && (gps->fix_type >= 3);
+    return _NED_origin_initialised && (gps->fix_type >= 6);//by sjj
 }
 
 /*
@@ -110,7 +110,7 @@ bool Ekf::collect_gps(uint64_t time_usec, struct gps_message *gps)
 bool Ekf::gps_is_good(struct gps_message *gps)
 {
 	// Check the fix type
-	_gps_check_fail_status.flags.fix = (gps->fix_type < 3);
+    _gps_check_fail_status.flags.fix = (gps->fix_type < 6);//by sjj
 
 	// Check the number of satellites
 	_gps_check_fail_status.flags.nsats = (gps->nsats < _params.req_nsats);
